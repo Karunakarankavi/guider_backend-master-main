@@ -1,5 +1,8 @@
 package com.guider.controller;
 
+import java.util.Map;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,14 +30,14 @@ public class RegistrationController {
 	    }
 	   
 	    @PostMapping("/users")
-	    public String registerUser(@RequestBody User user) {
+	    public ResponseEntity<Map<String, Object>>registerUser(@RequestBody User user) {
 	    	
 	    	 return userService.registerUser(user);
 	    	
 	    	
 	    }
 	    @PostMapping("/interviewer")
-	    public String registeInterviewer(@RequestBody Interviewer interviewer) {
+	    public ResponseEntity<Map<String, Object>>  registeInterviewer(@RequestBody Interviewer interviewer) {
 	    	
 	    	 return interviewerService.registerInterviewer(interviewer);
 	    	

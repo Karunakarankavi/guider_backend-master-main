@@ -40,9 +40,11 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         // Create User entity
         User user = new User();
-        user.setUsername(email);
+        user.setUsername(name);
+        user.setEmail(email);
         user.setPassword("OAUTH_USER");
         user.setRole("ROLE_USER");
+        user.setPhoneNumber("7878598254");
          
         userRepository.save(user);
 
