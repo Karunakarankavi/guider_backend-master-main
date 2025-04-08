@@ -8,5 +8,7 @@ import com.guider.entity.User;
 
 public interface UserRepository extends JpaRepository<User, Long>   {
      
-    Optional<User> findByUsernameOrEmailOrPhoneNumber(String username, String email, String phoneNumber);
+    Optional<User> findByUsernameOrEmailOrPhoneNumber(String username, String email, String phoneNumber); 
+    
+
 }

@@ -29,7 +29,7 @@ public class UserService {
     	 try {
              // Check for existing user
              Optional<User> existingUser = userRepository.findByUsernameOrEmailOrPhoneNumber(
-                     user.getUsername(), user.getEmail(), user.getPhoneNumber()
+                  user.getUsername() ,    user.getEmail() , user.getPhoneNumber()
              );
 
              if (existingUser.isPresent()) {
@@ -40,14 +40,12 @@ public class UserService {
 
              // Encrypt password and set role
              user.setPassword(passwordEncoder.encode(user.getPassword()));
-             user.setRole("ROLE_USER");
-
              // Save the user
              User savedUser = userRepository.save(user);
 
              response.put("success", true);
              response.put("message", "User registered successfully!");
-             response.put("userId", savedUser.getId()); // Returning the saved user ID
+             response.put("userId", savedUser.getUser_id()); // Returning the saved user ID
 
              return ResponseEntity.status(HttpStatus.CREATED).body(response);
 

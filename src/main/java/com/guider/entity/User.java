@@ -1,13 +1,5 @@
 package com.guider.entity;
 
-import java.util.List;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import io.jsonwebtoken.io.IOException;
 import jakarta.persistence.*;
 
 @Entity
@@ -17,12 +9,12 @@ import jakarta.persistence.*;
         @UniqueConstraint(columnNames = "phoneNumber")
 })
 public class User {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long user_id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String username;
 
     @Column(nullable = false, unique = true)
@@ -36,88 +28,16 @@ public class User {
 
     @Column(nullable = false)
     private String role;
-    
-    public Integer getNoofInterview() {
-		return noofInterview;
-	}
 
-	public void setNoofInterview(Integer noofInterview) {
-		this.noofInterview = noofInterview;
-	}
-
-	public Long getTotal_score() {
-		return total_score;
-	}
-
-	public void setTotal_score(Long total_score) {
-		this.total_score = total_score;
-	}
-
-	public Integer getAvg() {
-		return avg;
-	}
-
-	public void setAvg(Integer avg) {
-		this.avg = avg;
-	}
-
-	private Integer noofInterview;
-    private Long total_score;
-    private Integer avg;
-    
-    
-    @Column(columnDefinition = "json")  // Store JSON as a String
-    private String studyMaterial; // Integer array stored as JSON string
-
-    @Column(columnDefinition = "json")
-    private String skills; // String array stored as JSON string
-
-    // Convert JSON String to List<Integer> for studyMaterial
-    public List<Integer> getStudyMaterialList() throws JsonMappingException, JsonProcessingException {
-        return convertJsonToList(studyMaterial, new TypeReference<List<Integer>>() {});
-    }
-
-    public void setStudyMaterialList(List<Integer> studyMaterialList) throws JsonProcessingException {
-        this.studyMaterial = convertListToJson(studyMaterialList);
-    }
-
-    // Convert JSON String to List<String> for skills
-    public List<String> getSkillsList() throws JsonMappingException, JsonProcessingException {
-        return convertJsonToList(skills, new TypeReference<List<String>>() {});
-    }
-
-    public void setSkillsList(List<String> skillsList) throws JsonProcessingException {
-        this.skills = convertListToJson(skillsList);
-    }
-
-    // Generic method to convert JSON String to List<T>
-    private <T> List<T> convertJsonToList(String json, TypeReference<List<T>> typeRef) throws JsonMappingException, JsonProcessingException {
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.readValue(json, typeRef);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    // Generic method to convert List<T> to JSON String
-    private <T> String convertListToJson(List<T> list) throws JsonProcessingException {
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.writeValueAsString(list);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private UserStats userStats;
 
     // Getters and Setters
-    public Long getId() {
+    public Long getUser_id() {
         return user_id;
     }
 
-    public void setId(Long id) {
+    public void setUser_id(Long user_id) {
         this.user_id = user_id;
     }
 
@@ -160,6 +80,13 @@ public class User {
     public void setRole(String role) {
         this.role = role;
     }
+
+    public UserStats getUserStats() {
+        return userStats;
+    }
+
+    public void setUserStats(UserStats userStats) {
+        this.userStats = userStats;
+        userStats.setUser(this); // Maintain bidirectional consistency
+    }
 }
-
-

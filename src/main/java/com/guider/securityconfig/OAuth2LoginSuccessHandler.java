@@ -3,6 +3,7 @@ package com.guider.securityconfig;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -37,16 +38,36 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         // Extract user details
         String email = oAuth2User.getAttribute("email");
         String name = oAuth2User.getAttribute("name");
+        // ✅ Get the role from the OAuth2AuthenticationToken's authorizedClientRegistrationId or some preserved value
+        String uri = request.getRequestURL().toString();
+        String query = request.getQueryString();
 
+        // Extract role from referer header as workaround
+        String referer = request.getHeader("referer");
+        String roleParam = "ROLE_USER"; // default
+
+        if (referer != null && referer.contains("state=")) {
+            roleParam = "ROLE_" + referer.split("state=")[1].toUpperCase();
+        }
+
+        System.out.println("Resolved role: " + roleParam);
+
+
+        Optional<User> existingUser = userRepository.findByUsernameOrEmailOrPhoneNumber(name, email , "");
         // Create User entity
         User user = new User();
         user.setUsername(name);
         user.setEmail(email);
-        user.setPassword("OAUTH_USER");
-        user.setRole("ROLE_USER");
-        user.setPhoneNumber("7878598254");
-         
-        userRepository.save(user);
+        if (existingUser.isEmpty()) {
+           
+            user.setPassword("OAUTH_USER");
+            user.setRole("ROLE_USER");
+            user.setPhoneNumber("78785988454");
+
+            userRepository.save(user);
+        } else {
+            System.out.println("User already exists. Skipping save.");
+        }
 
 
         // Generate JWT Token

@@ -67,7 +67,7 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable()) // Disable CSRF for stateless authentication
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/auth/customlogin", "/auth/check", "/register/users", "/register/interviewer", "/oauth2/**").permitAll() // Public endpoints
+                .requestMatchers("/", "/auth/customlogin" , "/register/users",  "/register/hr","/register/interviewer", "/oauth2/**" , "/actuator/**").permitAll() // Public endpoints
                 .anyRequest().authenticated() // Require authentication for all other endpoints
             )
             .authenticationProvider(authenticationProvider()) 
