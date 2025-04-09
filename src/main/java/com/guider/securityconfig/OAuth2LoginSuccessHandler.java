@@ -38,20 +38,9 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         // Extract user details
         String email = oAuth2User.getAttribute("email");
         String name = oAuth2User.getAttribute("name");
-        // ✅ Get the role from the OAuth2AuthenticationToken's authorizedClientRegistrationId or some preserved value
-        String uri = request.getRequestURL().toString();
-        String query = request.getQueryString();
-
-        // Extract role from referer header as workaround
-        String referer = request.getHeader("referer");
-        String roleParam = "ROLE_USER"; // default
-
-        if (referer != null && referer.contains("state=")) {
-            roleParam = "ROLE_" + referer.split("state=")[1].toUpperCase();
-        }
-
-        System.out.println("Resolved role: " + roleParam);
-
+        
+        String role = (String) request.getSession().getAttribute("oauth2_role");
+         
 
         Optional<User> existingUser = userRepository.findByUsernameOrEmailOrPhoneNumber(name, email , "");
         // Create User entity
@@ -60,8 +49,9 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         user.setEmail(email);
         if (existingUser.isEmpty()) {
            
+        	System.out.println(role);
             user.setPassword("OAUTH_USER");
-            user.setRole("ROLE_USER");
+            user.setRole("ROLE_" + role);
             user.setPhoneNumber("78785988454");
 
             userRepository.save(user);

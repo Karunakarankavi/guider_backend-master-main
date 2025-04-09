@@ -1,14 +1,15 @@
 package com.guider.controller;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import com.guider.entity.AuthRequest;
 import com.guider.entity.User;
 import com.guider.services.JwtUtil;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,11 +36,16 @@ public class AuthController {
 	        this.passwordEncoder =  passwordEncoder;
 	    }
 	
-    @PostMapping("/check")
-	public String checkMethod() {
-    	
-		return "security working fine";
-	}
+	    @PostMapping("/oauthLogin")
+	    public String handleOAuthLogin(@RequestParam String role, HttpServletRequest request) {
+	        System.out.println("Received role: " + role);
+	        
+	        // Store role in session
+	        request.getSession().setAttribute("oauth2_role", role);
+	        
+	        // Redirect to Google OAuth2 endpoint
+	        return "redirect:/oauth2/authorization/google";
+	    }
     
    
     

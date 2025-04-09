@@ -35,7 +35,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         String requestURI = request.getRequestURI();
 
         // Skip JWT processing for OAuth2 and public endpoints
-        if ( requestURI.equals("/auth/customlogin") || requestURI.equals("/register/users") ) {
+        if ( requestURI.equals("/auth/customlogin") || requestURI.equals("/register/users" ) || requestURI.equals("/auth/oauthLogin") ) {
             filterChain.doFilter(request, response);
             return;
         }
