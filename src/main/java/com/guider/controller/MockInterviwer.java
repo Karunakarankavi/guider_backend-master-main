@@ -1,31 +1,32 @@
 package com.guider.controller;
 
+import java.util.Map;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.guider.dto.Response;
 import com.guider.entity.MockInterview;
 import com.guider.entity.User;
 import com.guider.repository.MockInterviewRespository;
+import com.guider.services.MockInterviewService;
 
 @RestController
 @RequestMapping("/mock")
 public class MockInterviwer {
 	
-	private final MockInterviewRespository mockInterviewRespository ;
+	private final MockInterviewService mockInterviewService ;
 	
-	public MockInterviwer(MockInterviewRespository mockInterviewRespository ) {
-		this.mockInterviewRespository = mockInterviewRespository;
+	public MockInterviwer(MockInterviewService mockInterviewService ) {
+		this.mockInterviewService = mockInterviewService;
 	}
 	
 	@PostMapping("/register")
-	public String registerInterview(@RequestBody MockInterview mockinterview ) {
-		mockinterview.setInterviewDateTime(mockinterview.getInterviewDateTime());
-		mockinterview.setInterviewerId(mockinterview.getInterviewerId());
-		mockinterview.setIntervieweeId(mockinterview.getIntervieweeId());
-		mockInterviewRespository.save(mockinterview);
-		return null;
+	public ResponseEntity<Response> registerInterview(@RequestBody MockInterview mockinterview ) {
+		return mockInterviewService.postJob(mockinterview);
 
 	};
 }

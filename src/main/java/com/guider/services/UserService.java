@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.guider.dto.Response;
 import com.guider.entity.User;
 import com.guider.repository.UserRepository;
 
@@ -23,39 +24,30 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public ResponseEntity<Map<String, Object>>  registerUser(User user) {
-        Map<String, Object> response = new HashMap<>();
+    public ResponseEntity<Response> registerUser(User user) {
+        try {
+            Optional<User> existingUser = userRepository.findByUsernameOrEmailOrPhoneNumber(
+                user.getUsername(), user.getEmail(), user.getPhoneNumber()
+            );
 
-    	 try {
-             // Check for existing user
-             Optional<User> existingUser = userRepository.findByUsernameOrEmailOrPhoneNumber(
-                  user.getUsername() ,    user.getEmail() , user.getPhoneNumber()
-             );
+            if (existingUser.isPresent()) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(
+                    new Response(false, "User with the same username, email, or phone number already exists!", null, null)
+                );
+            }
 
-             if (existingUser.isPresent()) {
-                 response.put("success", false);
-                 response.put("message", "User with the same username, email, or phone number already exists!");
-                 return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
-             }
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            User savedUser = userRepository.save(user);
 
-             // Encrypt password and set role
-             user.setPassword(passwordEncoder.encode(user.getPassword()));
-             // Save the user
-             User savedUser = userRepository.save(user);
+            return ResponseEntity.status(HttpStatus.CREATED).body(
+                new Response(true, "User registered successfully!", savedUser.getUser_id(), null)
+            );
 
-             response.put("success", true);
-             response.put("message", "User registered successfully!");
-             response.put("userId", savedUser.getUser_id()); // Returning the saved user ID
-
-             return ResponseEntity.status(HttpStatus.CREATED).body(response);
-
-         } catch (Exception e) {
-             response.put("success", false);
-             response.put("message", "An error occurred while registering the user.");
-             response.put("error", e.getMessage()); // Provide detailed error message for debugging
-
-             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-         }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                new Response(false, "An error occurred while registering the user.", null, e.getMessage())
+            );
+        }
     }
 }
 

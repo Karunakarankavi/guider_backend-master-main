@@ -36,7 +36,7 @@ public class JwtUtil {
         claims.put("issuedAt", issuedAt);
         claims.put("expiration", expiryAt);
         claims.put("userName", user.getUsername());
-
+        
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(issuedAt)

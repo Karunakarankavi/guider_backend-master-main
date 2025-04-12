@@ -39,10 +39,13 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         String email = oAuth2User.getAttribute("email");
         String name = oAuth2User.getAttribute("name");
         
+        System.out.println("name" + name);
+        System.out.println("email" + email);
+        
         String role = (String) request.getSession().getAttribute("oauth2_role");
          
 
-        Optional<User> existingUser = userRepository.findByUsernameOrEmailOrPhoneNumber(name, email , "");
+        Optional<User> existingUser = userRepository.findByEmailOrPhoneNumber( email , "");
         // Create User entity
         User user = new User();
         user.setUsername(name);
@@ -52,7 +55,6 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         	System.out.println(role);
             user.setPassword("OAUTH_USER");
             user.setRole("ROLE_" + role);
-            user.setPhoneNumber("78785988454");
 
             userRepository.save(user);
         } else {

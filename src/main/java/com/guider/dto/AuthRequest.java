@@ -1,4 +1,4 @@
-package com.guider.entity;
+package com.guider.dto;
 
 public class AuthRequest {
     private String username;
@@ -31,4 +31,3 @@ public class AuthRequest {
         this.password = password;
     }
 }
-
