@@ -21,7 +21,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-@CrossOrigin(origins = "http://localhost:4200") // Allow requests from Angular app
+@CrossOrigin(origins = "http://localhost:4200", allowCredentials = "true")
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -37,14 +37,21 @@ public class AuthController {
 	    }
 	
 	    @PostMapping("/oauthLogin")
-	    public String handleOAuthLogin(@RequestParam String role, HttpServletRequest request) {
+	    public ResponseEntity<Map<String, Object>> handleOAuthLogin(@RequestParam String role, HttpServletRequest request) {
 	        System.out.println("Received role: " + role);
 	        
 	        // Store role in session
 	        request.getSession().setAttribute("oauth2_role", role);
 	        
 	        // Redirect to Google OAuth2 endpoint
-	        return "redirect:/oauth2/authorization/google";
+	        
+	        Map<String, Object> response = new HashMap<>();
+	        
+	        response.put("redirecturl", "oauth2/authorization/google");
+	        
+            return ResponseEntity.ok(response);
+
+
 	    }
     
    

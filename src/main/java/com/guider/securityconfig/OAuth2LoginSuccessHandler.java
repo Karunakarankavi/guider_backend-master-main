@@ -1,6 +1,8 @@
 package com.guider.securityconfig;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -72,6 +74,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        new ObjectMapper().writeValue(response.getWriter(), responseData);
+        String redirectUrl = "http://localhost:4200/dashboard/home?token=" + URLEncoder.encode( token , StandardCharsets.UTF_8);
+        response.sendRedirect(redirectUrl);
     }
 }
