@@ -74,7 +74,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        String redirectUrl = "http://localhost:4200/dashboard/home?token=" + URLEncoder.encode( token , StandardCharsets.UTF_8);
+        String redirectUrl = "http://localhost:4200/dashboard?token=" + URLEncoder.encode( token , StandardCharsets.UTF_8);
         response.sendRedirect(redirectUrl);
     }
 }
