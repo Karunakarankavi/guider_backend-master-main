@@ -32,6 +32,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(jakarta.servlet.http.HttpServletRequest request,
 			jakarta.servlet.http.HttpServletResponse response, jakarta.servlet.FilterChain filterChain)
 			throws jakarta.servlet.ServletException, IOException {
+    	System.out.println("doing filter");
         String requestURI = request.getRequestURI();
 
         // Skip JWT processing for OAuth2 and public endpoints
@@ -39,20 +40,24 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
+        System.out.println("43");
 
         // Extract the Authorization header
         final String authorizationHeader = request.getHeader("Authorization");
+        
+        
 
-        String username = null;
+        String email = null;
         String jwt = null;
 
         // Check if the header is present and starts with "Bearer "
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             jwt = authorizationHeader.substring(7); // Extract the token
+            System.out.println("jwt"+jwt);
             try {
                 // Validate the token and extract the username
                 Claims claims = jwtUtil.validateToken(jwt);
-                username = claims.get("userName", String.class);
+                email = claims.get("email", String.class);
             } catch (Exception e) {
                 // Log the error or handle it as needed
                 System.err.println("JWT validation failed: " + e.getMessage());
@@ -62,9 +67,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         }
 
         // If the token is valid and no authentication is set in the context
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             // Load the user details from the database
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+            UserDetails userDetails = this.userDetailsService.loadUserByUsername(email);
 
             // Create an authentication object
             UsernamePasswordAuthenticationToken authenticationToken =

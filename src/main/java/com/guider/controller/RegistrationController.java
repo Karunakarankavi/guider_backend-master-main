@@ -14,7 +14,6 @@ import com.guider.dto.Response;
 import com.guider.entity.User;
 import com.guider.repository.UserRepository;
 import com.guider.services.UserService;
-@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/register")
 public class RegistrationController {

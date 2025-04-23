@@ -64,7 +64,7 @@ public class SecurityConfig {
     // ✅ Security filter configuration (Handles authentication & authorization)
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtUtil jwtUtil, AuthenticationSuccessHandler successHandler) throws Exception {
-        http
+        http.cors().and()
             .csrf(csrf -> csrf.disable()) // Disable CSRF for stateless authentication
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/", "/auth/oauthLogin", "/auth/customlogin" , "/register/users",  "/register/hr","/register/interviewer", "/oauth2/**"  , "/actuator/**").permitAll() // Public endpoints
