@@ -58,6 +58,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 // Validate the token and extract the username
                 Claims claims = jwtUtil.validateToken(jwt);
                 email = claims.get("email", String.class);
+                System.out.println(email);
             } catch (Exception e) {
                 // Log the error or handle it as needed
                 System.err.println("JWT validation failed: " + e.getMessage());

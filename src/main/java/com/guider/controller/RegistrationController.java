@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.guider.dto.Response;
+import com.guider.entity.Interviewer;
 import com.guider.entity.User;
 import com.guider.repository.UserRepository;
+import com.guider.services.InterviewerService;
 import com.guider.services.UserService;
 @RestController
 @RequestMapping("/register")
@@ -20,10 +22,12 @@ public class RegistrationController {
  
 	
 	    private final UserService userService;
+	    private final InterviewerService interviewerService;
 
-	    public RegistrationController( UserService userService ) {
+	    public RegistrationController( UserService userService , InterviewerService interviewerService ) {
 	      
 			this.userService = userService;
+			this.interviewerService =  interviewerService;
 	    }
 	   
 	    @PostMapping("/users")
@@ -35,9 +39,8 @@ public class RegistrationController {
 	    	
 	    }
 	    @PostMapping("/interviewer")
-	    public ResponseEntity<Response>  registerInterviewer(@RequestBody User user) {
-	    	user.setRole("ROLE_INTERVIEWER");
-	    	 return userService.registerUser(user);
+	    public ResponseEntity<Map<String, Object>>  registerInterviewer(@RequestBody Interviewer interviewer) {
+	    	 return interviewerService.saveInterviewer(interviewer);
 	    	
 	    	
 	    }

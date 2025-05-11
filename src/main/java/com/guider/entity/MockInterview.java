@@ -29,23 +29,60 @@ public class MockInterview {
 	public void setInterviewDateTime(LocalDateTime interviewDateTime) {
 		this.interviewDateTime = interviewDateTime;
 	}
-	public Long getInterviewerId() {
-		return interviewerId;
-	}
-	public void setInterviewerId(Long interviewerId) {
-		this.interviewerId = interviewerId;
-	}
-	public Long getIntervieweeId() {
-		return intervieweeId;
-	}
-	public void setIntervieweeId(Long intervieweeId) {
-		this.intervieweeId = intervieweeId;
-	}
+	
 	
 	 @JsonProperty("dateTime") // This ensures correct mapping from JSON
 	    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
 	    @Column(nullable = false)
 	private LocalDateTime interviewDateTime;
-    private Long interviewerId;
-    private Long intervieweeId;
+    public String getInterviewerId() {
+		return interviewerId;
+	}
+	public void setInterviewerId(String interviewerId) {
+		this.interviewerId = interviewerId;
+	}
+	public String getIntervieweeId() {
+		return intervieweeId;
+	}
+	public void setIntervieweeId(String intervieweeId) {
+		this.intervieweeId = intervieweeId;
+	}
+
+
+	private String interviewerId;
+    private String intervieweeId;
+    @Column(nullable = false)
+    private String name;
+    public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+	public String getSkills() {
+		return skills;
+	}
+	public void setSkills(String skills) {
+		this.skills = skills;
+	}
+
+    @Column(nullable = false)
+	private String phoneNumber;
+    @Column(nullable = false)
+    private String skills;
+    @Column(nullable = false)
+    private String pdf;
+	public String getPdf() {
+		return pdf;
+	}
+	public void setPdf(String pdf) {
+		this.pdf = pdf;
+	}
+
 }

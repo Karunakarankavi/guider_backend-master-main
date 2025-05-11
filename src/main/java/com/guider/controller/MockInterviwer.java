@@ -3,6 +3,7 @@ package com.guider.controller;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,7 +27,13 @@ public class MockInterviwer {
 	
 	@PostMapping("/register")
 	public ResponseEntity<Response> registerInterview(@RequestBody MockInterview mockinterview ) {
-		return mockInterviewService.postJob(mockinterview);
+		System.out.println("print ln register");
+		return mockInterviewService.bookInterview(mockinterview);
 
 	};
+	
+	@PostMapping("/test")
+	public void test(@RequestBody MockInterview mockinterview ) {
+		System.out.println("print");
+	}
 }

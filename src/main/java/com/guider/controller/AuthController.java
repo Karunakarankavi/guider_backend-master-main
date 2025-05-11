@@ -73,6 +73,7 @@ public class AuthController {
                 response.put("success", true);
                 response.put("message", "Login successful!");
                 response.put("token", token);
+                response.put("email" , authRequest.getUsername());
 
                 return ResponseEntity.ok(response);
             } else {

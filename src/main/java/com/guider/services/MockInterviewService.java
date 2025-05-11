@@ -23,7 +23,7 @@ public class MockInterviewService {
 		
 	}
 	
-	public ResponseEntity<Response>  postJob(MockInterview mockInterview){
+	public ResponseEntity<Response>  bookInterview(MockInterview mockInterview){
         Map<String, Object> response = new HashMap<>();
         try {
         	MockInterview savedmockInterview = mockInterviewRespository.save(mockInterview);

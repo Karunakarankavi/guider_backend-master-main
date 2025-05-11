@@ -13,7 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import io.jsonwebtoken.io.IOException;
 
-@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/pdf")
 public class PdfController {

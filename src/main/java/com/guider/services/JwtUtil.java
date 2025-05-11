@@ -37,7 +37,9 @@ public class JwtUtil {
         claims.put("expiration", expiryAt);
         claims.put("userName", user.getUsername());
         claims.put("email", user.getEmail()); // NOT user.getUsername()
+        claims.put("userId", user.getUser_id()); // NOT user.getUsername()
 
+System.out.println("get user id"+user.getUser_id());
         
         
         return Jwts.builder()
