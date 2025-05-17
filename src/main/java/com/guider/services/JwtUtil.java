@@ -1,15 +1,10 @@
 package com.guider.services;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.security.SignatureException;
 import org.springframework.stereotype.Service;
 import com.guider.entity.User;
+
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
@@ -18,65 +13,80 @@ import java.util.Map;
 @Service
 public class JwtUtil {
 
-    // Generate a secure key
-	private static final String SECRET_STRING = "kavithaenterprisefristprojectastechleadersoiamexisted";
-	private static final Key SECRET_KEY = Keys.hmacShaKeyFor(SECRET_STRING.getBytes());
-    private static final long EXPIRY_DURATION = 60 * 60 * 1000; // 1 hour in milliseconds
+    private static final String SECRET_STRING = "kavithaenterprisefristprojectastechleadersoiamexisted";
+    private static final Key SECRET_KEY = Keys.hmacShaKeyFor(SECRET_STRING.getBytes());
 
-    public String generateToken(User user) {
-    	System.out.println(user.getUsername());
-    	System.out.println(user.getPassword());
+    private static final long ACCESS_TOKEN_VALIDITY = 60  * 1000; // 1 hour
+    private static final long REFRESH_TOKEN_VALIDITY = 7 * 24 * 60 * 60 * 1000; // 7 days
+
+    public Map<String, String> generateToken(User user) {
         long currentTimeMillis = System.currentTimeMillis();
+
         Date issuedAt = new Date(currentTimeMillis);
-        Date expiryAt = new Date(currentTimeMillis + EXPIRY_DURATION);
+        Date accessTokenExpiry = new Date(currentTimeMillis + ACCESS_TOKEN_VALIDITY);
+        Date refreshTokenExpiry = new Date(currentTimeMillis + REFRESH_TOKEN_VALIDITY);
 
-        // Use a Map for claims
         Map<String, Object> claims = new HashMap<>();
-        claims.put("issuer", user.getUsername());
-        claims.put("issuedAt", issuedAt);
-        claims.put("expiration", expiryAt);
-        claims.put("userName", user.getUsername());
-        claims.put("email", user.getEmail()); // NOT user.getUsername()
-        claims.put("userId", user.getUser_id()); // NOT user.getUsername()
+        claims.put("userId", user.getUser_id());
+        claims.put("username", user.getUsername());
+        claims.put("email", user.getEmail());
+        claims.put("scope", "USER");
 
-System.out.println("get user id"+user.getUser_id());
-        
-        
-        return Jwts.builder()
+        String accessToken = Jwts.builder()
                 .setClaims(claims)
+                .setSubject(user.getUsername())
                 .setIssuedAt(issuedAt)
-                .setExpiration(expiryAt)
-                .signWith(SECRET_KEY) // Secure signing key
+                .setExpiration(accessTokenExpiry)
+                .claim("token_type", "access_token")
+                .signWith(SECRET_KEY, SignatureAlgorithm.HS256)
                 .compact();
+
+        String refreshToken = Jwts.builder()
+                .setSubject(user.getUsername())
+                .setIssuedAt(issuedAt)
+                .setExpiration(refreshTokenExpiry)
+                .claim("token_type", "refresh_token")
+                .signWith(SECRET_KEY, SignatureAlgorithm.HS256)
+                .compact();
+
+        Map<String, String> tokenMap = new HashMap<>();
+        tokenMap.put("access_token", accessToken);
+        tokenMap.put("refresh_token", refreshToken);
+
+        return tokenMap;
     }
 
-    // Method to validate the token
     public Claims validateToken(String token) throws Exception {
+
         try {
-            // Parse the token and verify its signature
+        	System.out.println("printing token" +token);
+
             Claims claims = Jwts.parserBuilder()
-                    .setSigningKey(SECRET_KEY) // Use the same secret key
+                    .setSigningKey(SECRET_KEY)
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
 
-            // Check if the token is expired
+            // Optional: distinguish between access and refresh tokens
+            System.out.println("Token claims: " + claims);
+
+            String tokenType = claims.get("token_type", String.class);
+            System.out.println("getting token type"+tokenType);
+            if (tokenType == null || (!tokenType.equals("access_token") && !tokenType.equals("refresh_token"))) {
+                throw new Exception("Unknown token type");
+            }
+
             Date expiration = claims.getExpiration();
             if (expiration.before(new Date())) {
                 throw new Exception("Token has expired");
             }
-
-            // Return the claims if the token is valid
+            System.out.println(claims);
             return claims;
+
         } catch (ExpiredJwtException ex) {
             throw new Exception("Token has expired", ex);
-        } catch (UnsupportedJwtException ex) {
-            throw new Exception("Unsupported JWT token", ex);
-        } catch (MalformedJwtException ex) {
-            throw new Exception("Malformed JWT token", ex);
-        } catch (SignatureException ex) {
-            throw new Exception("Invalid JWT signature", ex);
-        } catch (IllegalArgumentException ex) {
+        } catch (UnsupportedJwtException | MalformedJwtException |
+                 SignatureException | IllegalArgumentException ex) {
             throw new Exception("Invalid JWT token", ex);
         }
     }

@@ -69,7 +69,8 @@ public class AuthController {
             // Check if authentication is successful
             if (authentication.isAuthenticated()) {
             	System.out.println("sucessful");
-                String token = jwtUtil.generateToken(authRequest);
+                Map<String, String> token = jwtUtil.generateToken(authRequest);
+                System.out.println(token);
                 response.put("success", true);
                 response.put("message", "Login successful!");
                 response.put("token", token);

@@ -67,7 +67,7 @@ public class SecurityConfig {
         http.cors().and()
             .csrf(csrf -> csrf.disable()) // Disable CSRF for stateless authentication
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/auth/oauthLogin", "/auth/customlogin" , "/register/users",  "/register/hr","/register/interviewer", "/oauth2/**"  , "/actuator/**").permitAll() // Public endpoints
+                .requestMatchers("/", "/auth/oauthLogin", "/auth/customlogin" , "/register/users",  "/register/hr","/register/interviewer", "/oauth2/**"  , "/actuator/**" , "/swagger-ui.html").permitAll() // Public endpoints
                 .anyRequest().authenticated() // Require authentication for all other endpoints
             )
             .authenticationProvider(authenticationProvider()) 
@@ -83,7 +83,11 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:4200"));
+        config.setAllowedOrigins(List.of(
+            "http://localhost:4200",
+            "http://guider-front.s3-website.ap-south-1.amazonaws.com/",
+            "http://www.mockpanel.com"
+        ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true); // Allow credentials like cookies or Authorization headers
@@ -92,5 +96,7 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", config);
         return source;
     }
+
+    
 
 }

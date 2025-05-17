@@ -65,16 +65,23 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
 
         // Generate JWT Token
-        String token = jwtUtil.generateToken(user);
+        Map<String, String> token = jwtUtil.generateToken(user);
 
         // Prepare JSON response
-        Map<String, String> responseData = new HashMap<>();
+        Map<String, Object> responseData = new HashMap<>();
         responseData.put("token", token);
         responseData.put("message", "Login successful!");
 
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        String redirectUrl = "http://localhost:4200/dashboard?token=" + URLEncoder.encode( token , StandardCharsets.UTF_8);
-        response.sendRedirect(redirectUrl);
+        String accessToken = token.get("access_token");
+        String refreshToken = token.get("refresh_token");
+
+        String redirectUrl = String.format(
+        	    "http://localhost:4200/dashboard?access_token=%s&refresh_token=%s",
+        	    URLEncoder.encode(accessToken, StandardCharsets.UTF_8),
+        	    URLEncoder.encode(refreshToken, StandardCharsets.UTF_8)
+        	);
+        	response.sendRedirect(redirectUrl);
     }
 }

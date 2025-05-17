@@ -36,7 +36,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         String requestURI = request.getRequestURI();
 
         // Skip JWT processing for OAuth2 and public endpoints
-        if ( requestURI.equals("/auth/customlogin") || requestURI.equals("/register/users" ) || requestURI.equals("/auth/oauthLogin") ) {
+        if ( requestURI.equals("/swagger-ui.html") || 
+ requestURI.equals("/auth/customlogin") || requestURI.equals("/register/users" ) || requestURI.equals("/auth/oauthLogin") ) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -57,8 +58,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             try {
                 // Validate the token and extract the username
                 Claims claims = jwtUtil.validateToken(jwt);
-                email = claims.get("email", String.class);
-                System.out.println(email);
+                email = claims.get("username", String.class);
+                System.out.println("email for"+email);
             } catch (Exception e) {
                 // Log the error or handle it as needed
                 System.err.println("JWT validation failed: " + e.getMessage());
